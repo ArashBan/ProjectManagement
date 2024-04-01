@@ -1,0 +1,142 @@
+﻿@using ProjectManagement.Application.Extensions
+@using ProjectManagement.DataLayer.DTOs.Common
+@using ProjectManagement.DataLayer.Entities.Courses
+@{
+    ViewData["Title"] = "مشخصات پروژه";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var profile = ViewData["Profile"] as StudentProfileDto;
+    var news = ViewData["News"] as List<NewsDto>;
+
+}
+
+@section Css {
+    <link href="~/Theme/assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
+}
+
+    <div class="post d-flex flex-column-fluid main-page-margin-fix" id="kt_post" style="padding: 10px;">
+        <div id="kt_content_container" class="container-xxl">
+            <div class="row">
+                <div class="col-md-6">
+                    <partial name="_ProfileMainSectionPartial" model="profile"/>
+                    <div class="card mb-5 mb-xl-10 profile-details" id="kt_profile_details_view">
+                        <div class="card-header cursor-pointer">
+                            <div class="card-title m-0">
+                                <h3 class="fw-bolder m-0">جزییات پروژه</h3>
+                            </div>
+                        </div>
+
+                        <div class="card-body p-9">
+                            @if (profile.Project != null)
+                            {
+
+                                <div class="row mb-7">
+                                    <label class="col-lg-4 fw-bold text-muted">عنوان</label>
+                                    <div class="col-lg-8 fv-row">
+                                        <span class="fw-bold text-gray-800 fs-6">@profile.Project.Title</span>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-7">
+                                    <label class="col-lg-4 fw-bold text-muted">نوع</label>
+                                    <div class="col-lg-8 fv-row">
+                                        <span class="fw-bold text-gray-800 fs-6">@profile.Project.ProjectType.GetEnumName()</span>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-7">
+                                    <label class="col-lg-4 fw-bold text-muted">پلتفرم</label>
+                                    <div class="col-lg-8 fv-row">
+                                        <span class="fw-bold text-gray-800 fs-6">@profile.Project.Platform.GetEnumName()</span>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-7">
+                                    <label class="col-lg-4 fw-bold text-muted">توضیحات</label>
+                                    <div class="col-lg-8 fv-row">
+                                        <span class="fw-bold text-gray-800 fs-6">@profile.Project.Description</span>
+                                    </div>
+                                </div>
+
+                                @if (profile.Project.TeammateName != null)
+                                {
+                                    <div class="row mb-7">
+                                        <label class="col-lg-4 fw-bold text-muted">همگروهی</label>
+                                        <div class="col-lg-8 fv-row">
+                                            <span class="fw-bold text-gray-800 fs-6">@profile.Project.TeammateName (@profile.Project.TeammateStudentCode)</span>
+                                        </div>
+                                    </div>
+                                }
+
+                                <div class="row mb-7">
+                                    <label class="col-lg-4 fw-bold text-muted">استاد</label>
+                                    <div class="col-lg-8 fv-row">
+                                        <span class="fw-bold text-gray-800 fs-6">@profile.Project.TeacherFullName</span>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-7">
+                                    <label class="col-lg-4 fw-bold text-muted">وضعیت</label>
+                                    <div class="col-lg-8 fv-row">
+                                        <span class="fw-bold text-gray-800 fs-6">
+                                            @switch (@profile.Project.Situation)
+                                            {
+                                                case AcceptSituation.Confirm:
+                                                    <span class="badge badge-light-success fw-bolder px-4 py-3">@profile.Project.Situation.GetEnumName()</span>
+                                                    break;
+                                                case AcceptSituation.Accepted:
+                                                    <span class="badge badge-light-success fw-bolder px-4 py-3">@profile.Project.Situation.GetEnumName()</span>
+                                                    break;
+                                            }
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="notice d-flex bg-light-warning rounded border-warning border border-dashed p-6">
+                                    <span class="svg-icon svg-icon-2tx svg-icon-warning me-4">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                            <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="10" fill="currentColor"/>
+                                            <rect x="11" y="14" width="7" height="2" rx="1" transform="rotate(-90 11 14)"
+                                                  fill="currentColor"/>
+                                            <rect x="11" y="17" width="2" height="2" rx="1" transform="rotate(-90 11 17)"
+                                                  fill="currentColor"/>
+                                        </svg>
+                                    </span>
+                                    <div class="d-flex flex-stack flex-grow-1">
+                                        <div class="fw-bold">
+                                            <h4 class="text-gray-900 fw-bolder">هشدار</h4>
+                                            <div class="fs-6 text-gray-700">
+                                                شما هنوز پروژه تایید شده ای ندارید.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <!--end::Card body-->
+                    </div>
+
+                </div>
+                <div class="col-md-6">
+                    <partial name="_NewsSectionPartial" model="@news"/>
+                </div>
+            </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/Theme/assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <script src="~/Theme/assets/js/widgets.bundle.js"></script>
+    <script src="~/Theme/assets/js/custom/widgets.js"></script>
+    <script src="~/Theme/assets/js/custom/apps/chat/chat.js"></script>
+    <script src="~/Theme/assets/js/custom/utilities/modals/upgrade-plan.js"></script>
+    <script src="~/Theme/assets/js/custom/utilities/modals/create-app.js"></script>
+    <script src="~/Theme/assets/js/custom/utilities/modals/offer-a-deal/type.js"></script>
+    <script src="~/Theme/assets/js/custom/utilities/modals/offer-a-deal/details.js"></script>
+    <script src="~/Theme/assets/js/custom/utilities/modals/offer-a-deal/finance.js"></script>
+    <script src="~/Theme/assets/js/custom/utilities/modals/offer-a-deal/complete.js"></script>
+    <script src="~/Theme/assets/js/custom/utilities/modals/offer-a-deal/main.js"></script>
+    <script src="~/Theme/assets/js/custom/utilities/modals/users-search.js"></script>
+}

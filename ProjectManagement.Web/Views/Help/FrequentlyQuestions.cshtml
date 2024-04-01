@@ -1,0 +1,91 @@
+﻿@using ProjectManagement.DataLayer.DTOs.Common
+@using ProjectManagement.DataLayer.Entities.Common
+@{
+    ViewData["Title"] = "سوالات متداول";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var questions = ViewData["Questions"] as List<ProblemDto>;
+}
+
+@section Css {
+    <link href="~/Theme/assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
+}
+
+<div class="post d-flex flex-column-fluid" id="kt_post">
+        <div id="kt_content_container" class="container-xxl">
+
+            <h3 style="padding: 10px;">پروژه</h3>
+            <div class="card">
+                <!--begin::Body-->
+                <div class="accordion accordion-flush" id="accordionFlushExample-project">
+                @if (questions.Any(x => x.Type == InfoType.Project))
+                {
+                    @foreach (var item in questions.Where(x => x.Type == InfoType.Project).ToList())
+                    {
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingOne-@item.Id">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne-@item.Id" aria-expanded="false" aria-controls="flush-collapseOne-@item.Id">
+                                    @item.Question
+                                </button>
+                            </h2>
+                            <div id="flush-collapseOne-@item.Id" class="accordion-collapse collapse" aria-labelledby="flush-headingOne-@item.Id" data-bs-parent="#accordionFlushExample-project">
+                                <div class="accordion-body">@item.Answer</div>
+                            </div>
+                        </div>
+                    }
+                }
+                </div>
+            </div>
+
+            <h3 style="padding: 10px;">کارآموزی</h3>
+            <div class="card">
+                <!--begin::Body-->
+                <div class="accordion accordion-flush" id="accordionFlushExample-internship">
+                    @if (questions.Any(x => x.Type == InfoType.Internship))
+                    {
+                        @foreach (var item in questions.Where(x => x.Type == InfoType.Internship).ToList())
+                        {
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="flush-headingOne-@item.Id">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne-@item.Id" aria-expanded="false" aria-controls="flush-collapseOne-@item.Id">
+                                        @item.Question
+                                    </button>
+                                </h2>
+                                <div id="flush-collapseOne-@item.Id" class="accordion-collapse collapse" aria-labelledby="flush-headingOne-@item.Id" data-bs-parent="#accordionFlushExample-internship">
+                                    <div class="accordion-body">@item.Answer</div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+                <!--end::سوالات متداول card-->
+            </div>
+
+            <h3 style="padding: 10px;">عمومی</h3>
+            <div class="card">
+                <!--begin::Body-->
+                <div class="accordion accordion-flush" id="accordionFlushExample-Common">
+                    @if (questions.Any(x => x.Type == InfoType.Common))
+                    {
+                        @foreach (var item in questions.Where(x => x.Type == InfoType.Common).ToList())
+                        {
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="flush-headingOne-@item.Id">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne-@item.Id" aria-expanded="false" aria-controls="flush-collapseOne-@item.Id">
+                                        @item.Question
+                                    </button>
+                                </h2>
+                                <div id="flush-collapseOne-@item.Id" class="accordion-collapse collapse" aria-labelledby="flush-headingOne-@item.Id" data-bs-parent="#accordionFlushExample-Common">
+                                    <div class="accordion-body">@item.Answer</div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+                <!--end::Body-->
+            </div>
+        </div>
+    </div>
+    @section Scripts {
+    <script src="~/Theme/assets/plugins/custom/datatables/datatables.bundle.js"></script>
+}

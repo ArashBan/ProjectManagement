@@ -1,0 +1,52 @@
+﻿@using ProjectManagement.DataLayer.DTOs.Course
+@model ProjectProgressDto
+@{
+    ViewData["Title"] = "ارسال گزارش ماهانه";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="scroll-y px-10 px-lg-15 pt-0 pb-15">
+	<form id="kt_modal_new_target_form" asp-action="SendProjectProgress" asp-controller="Project" method="post" class="form">
+		<div class="mb-13 text-center">
+			<h1 class="mb-3">ارسال گزارش ماهانه</h1>
+			<div class="text-muted fw-bold fs-5">
+				گزارش از روند پیشرفت پروژه خود را به شکل ماهانه در این بخش ارسال کنید و توضیحات پیشرفت پروژه را شرح دهید.
+			</div>
+			@if (TempData["SuccessMessage"] != null)
+			{
+				<div class="p-3 mb-2 bg-success text-white" style="margin-top: 10px;">
+					@TempData["SuccessMessage"]
+				</div>
+			}
+			else if (TempData["ErrorMessage"] != null)
+			{
+				<div class="p-3 mb-2 bg-danger text-white" style="margin-top: 10px;">
+					@TempData["ErrorMessage"]
+				</div>
+			}
+		</div>
+
+		<div class="d-flex flex-column mb-8 fv-row">
+			<!--begin::Tags-->
+			<label class="d-flex align-items-center fs-6 fw-bold mb-2">
+				<span class="required">عنوان گزارش</span>
+			</label>
+			<!--end::Tags-->
+			<input type="text" asp-for="Title" class="form-control form-control-solid" placeholder="عنوان" />
+			<span class="text-danger" asp-validation-for="Title"></span>
+		</div>
+
+		<div class="d-flex flex-column mb-8">
+			<label class="required fs-6 fw-bold mb-2">متن گزارش شما</label>
+			<textarea asp-for="Description" class="form-control form-control-solid" rows="3"
+				placeholder="میزان پیشرفت و کارهای انجام شده پروژه را در این ماه توضیح دهید"></textarea>
+			<span class="text-danger" asp-validation-for="Description"></span>
+		</div>
+
+		<div class="text-center">
+			<button type="submit" id="kt_modal_new_target_submit" class="btn btn-primary">
+				<span class="indicator-label">ارسال گزارش</span>
+			</button>
+		</div>
+	</form>
+</div>

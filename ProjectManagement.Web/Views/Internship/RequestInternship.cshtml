@@ -1,0 +1,139 @@
+﻿@using ProjectManagement.DataLayer.DTOs.Course
+@model InternshipDto
+@{
+    ViewData["Title"] = "درخواست کارآموزی";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="scroll-y px-10 px-lg-15 pt-0 pb-15 request-form">
+	<form id="kt_modal_new_target_form" asp-action="RequestInternship" asp-controller="Internship" method="post" class="form">
+		<div class="mb-13 text-center">
+			<h1 class="mb-3">فرم ثبت درخواست کارآموزی</h1>
+			<div class="text-muted fw-bold fs-5">
+				جهت درخواست و بررسی محل کارآموزی شما، فرم زیر را پر کنید و ارسال کنید تا توسط استاد راهنما بررسی شود.
+				@*<a href="~/files/Project/Project.pdf" class="fw-bolder link-primary">دریافت فایل PDF پروژه</a>*@
+			</div>
+			@if (TempData["SuccessMessage"] != null)
+			{
+				<div class="p-3 mb-2 bg-success text-white" style="margin-top: 10px;">
+					@TempData["SuccessMessage"]
+				</div>
+			}
+			else if (TempData["ErrorMessage"] != null)
+			{
+				<div class="p-3 mb-2 bg-danger text-white" style="margin-top: 10px;">
+					@TempData["ErrorMessage"]
+				</div>
+			}
+		</div>
+		<div class="d-flex flex-column mb-8 fv-row">
+			<!--begin::Tags-->
+			<label class="d-flex align-items-center fs-6 fw-bold mb-2">
+				<span class="required">عنوان کارآموزی</span>
+				<i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip"
+					title="عنوان و یا موضوع کاری که قرار است انجام دهید را بنویسید"></i>
+			</label>
+			<!--end::Tags-->
+			<input type="text" asp-for="Title" class="form-control form-control-solid" placeholder="عنوان" />
+			<span class="text-danger" asp-validation-for="Title"></span>
+		</div>
+		<!--end::Input group-->
+		<!--begin::Input group-->
+		<div class="row g-9 mb-8">
+			<!--begin::Col-->
+			<div class="col-md-6 fv-row">
+				<label class="required fs-6 fw-bold mb-2">نام محل کارآموزی</label>
+				<input type="text" asp-for="PlaceName" class="form-control form-control-solid" placeholder="نام محل" />
+				<span class="text-danger" asp-validation-for="PlaceName"></span>
+			</div>
+			<!--end::Col-->
+			<!--begin::Col-->
+			<div class="col-md-6 fv-row">
+				<label class="required fs-6 fw-bold mb-2">شماره تلفن محل کارآموزی</label>				
+				<input type="text" asp-for="PlacePhoneNumber" class="form-control form-control-solid" />
+				<span class="text-danger" asp-validation-for="PlacePhoneNumber"></span>
+			</div>
+			<!--end::Col-->			
+		</div>
+		<!--end::Input group-->
+
+		@*<div class="d-flex flex-column mb-8 fv-row">
+			
+		</div>*@
+
+		<!--begin::Input group-->
+		<div class="d-flex flex-column mb-8">
+			<label class="fs-6 fw-bold mb-2">
+				<span class="required">توضیحات و نوع فعالیت</span>
+				<i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip"
+				   title="نوع فعالیتی که در محل کارآموزی قرار است انجام دهید و توضیحات تکیملی را به شکل کامل ارائه دهید"></i>
+				</label>			
+			<textarea asp-for="Description" class="form-control form-control-solid" rows="3"
+				placeholder="شرح دهید"></textarea>
+			<span class="text-danger" asp-validation-for="Description"></span>
+		</div>
+
+		<div class="row g-9 mb-8">
+			<!--begin::Col-->
+			<div class="col-md-6 fv-row">
+				<label class="fs-6 fw-bold mb-2">نام سرپست محل کارآموزی</label>
+				<input asp-for="SupervisorFullName" type="text" class="form-control form-control-solid"
+					placeholder="نام و نام خانوادگی" />
+				<span class="text-danger" asp-validation-for="SupervisorFullName"></span>
+			</div>
+			<!--end::Col-->
+			<!--begin::Col-->
+			<div class="col-md-6 fv-row">
+				<label class="d-flex align-items-center fs-6 fw-bold mb-2">
+					<span class="required">آدرس محل کارآموزی</span>
+				</label>
+				<div class="position-relative d-flex align-items-center">
+					<input asp-for="Address" type="text" class="form-control form-control-solid" />
+				</div>
+				<span class="text-danger" asp-validation-for="Address"></span>
+			</div>
+			<!--end::Col-->
+		</div>
+		
+		<div class="row g-9 mb-8">
+			<!--begin::Wrapper-->
+			<div class="d-flex flex-stack">
+				<!--begin::Tags-->
+				<div class="fw-bold me-5">
+					<input asp-for="Saturday" class="form-check-input h-20px w-20px" type="checkbox" />
+					<label class="fs-7">شنبه</label>
+				</div>
+				<div class="fw-bold me-5">
+					<input asp-for="Sunday" class="form-check-input h-20px w-20px" type="checkbox" />
+					<label class="fs-7">یک شنبه</label>
+				</div>
+				<div class="fw-bold me-5">
+					<input asp-for="Monday" class="form-check-input h-20px w-20px" type="checkbox" />
+					<label class="fs-7">دوشنبه</label>
+				</div>
+				<div class="fw-bold me-5">
+					<input asp-for="Tuesday" class="form-check-input h-20px w-20px" type="checkbox" />
+					<label class="fs-7">سه شنبه</label>
+				</div>
+				<div class="fw-bold me-5">
+					<input asp-for="Wednesday" class="form-check-input h-20px w-20px" type="checkbox" />
+					<label class="fs-7">چهارشنبه</label>
+				</div>
+				<div class="fw-bold me-5">
+					<input asp-for="Thursday" class="form-check-input h-20px w-20px" type="checkbox" />
+					<label class="fs-7">پنجشنبه</label>
+				</div>
+				<!--end::Tags-->
+			</div>
+			
+		</div>
+		<!--end::Input group-->
+		<!--begin::Actions-->
+		<div class="text-center">
+			<button type="submit" id="kt_modal_new_target_submit" class="btn btn-primary">
+				<span class="indicator-label">ثبت درخواست</span>
+			</button>
+		</div>
+		<!--end::Actions-->
+	</form>
+</div>

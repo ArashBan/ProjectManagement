@@ -1,0 +1,114 @@
+﻿@using ProjectManagement.DataLayer.DTOs.Course
+@using ProjectManagement.DataLayer.Entities.Courses
+@{
+    ViewData["Title"] = "گام های پروژه";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var project = ViewData["Project"] as RequestProjectDto;
+    var step = Convert.ToInt16(project.Step);
+}
+
+@section Css {
+    <link href="~/css/timeline.css" rel="stylesheet" type="text/css" />
+    }
+
+    <style>
+        .timeline-label:before {
+            content: inherit !important;
+            background-color: inherit !important;
+        }
+
+        .fa {
+            color: white;
+        }
+
+        .title {
+            color: black;
+        }
+    </style>
+
+@if (project != null)
+{
+
+}
+@*<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">*@
+    <div class="container bootstrap snippets bootdeys timline-padding">
+        <div class="col-md-12">
+            <div class="timeline-centered timeline-sm">
+                <article class="timeline-entry">
+                    <div class="timeline-entry-inner">
+                        <h1 class="timeline-time">گام اول</h1>
+                        <div class="timeline-icon @(step > 1 ? "bg-green" : "bg-yellow")"><i class="fa fa-sharp fa-solid fa-plus"></i></div>
+                        <div class="timeline-label @(step > 1 ? "bg-green" : "")">
+                            <h4 class="@(step > 1 ? "" : "title")">تعریف و درخواست پروژه</h4>
+
+                            <p>ابتدا در صفحه ثبت درخواست پروژه، فرم مربوطه رو تکمیل و ارسال کنید تا توسط استاد راهنما تایید شود</p>
+                        </div>
+                    </div>
+                </article>
+                <article class="timeline-entry left-aligned">
+                    <div class="timeline-entry-inner">
+                        <h1 class="timeline-time">گام دوم</h1>
+                        <div class="timeline-icon @(step > 2 ? "bg-green" : step == 2 ? "bg-yellow" : "bg-red")"><i class="fa fa-sharp fa-solid fa-check"></i></div>
+                        <div class="timeline-label @(step > 2 ? "bg-green" : "")">
+                            <h4 class="@(step > 2 ? "" : "title")">تایید توسط استاد راهنما</h4>
+                            <p>منتظر بمانید تا درخواست پروژه شما توسط استاد راهنما تایید شود</p>
+                        </div>
+                    </div>
+                </article>
+                <article class="timeline-entry">
+                    <div class="timeline-entry-inner">
+                        <h1 class="timeline-time">گام سوم</h1>
+                        <div class="timeline-icon @(step > 3 ? "bg-green" : step == 3 ? "bg-yellow" : "bg-red")"><i class="fa fa-sharp fa-solid fa-check-double"></i></div>
+                        <div class="timeline-label @(step > 3 ? "bg-green" : "")">
+                            <h4 class="@(step > 3 ? "" : "title")">تایید توسط مدیر گروه</h4>
+                            <p>پس از تایید استاد راهنما، منتظر تایید مدیر پروژه یا مدیر گروه بمانید</p>
+                        </div>
+                    </div>
+                </article>
+                <article class="timeline-entry left-aligned">
+                    <div class="timeline-entry-inner">
+                        <h1 class="timeline-time">گام چهارم</h1>
+                        <div class="timeline-icon @(step > 4 ? "bg-green" : step == 4 ? "bg-yellow" : "bg-red")"><i class="fa fa-sharp fa-solid fa-file"></i></div>
+                        <div class="timeline-label @(step > 4 ? "bg-green" : "")">
+                            <h4 class="@(step > 4 ? "" : "title")">ارسال گزارش های ماهانه</h4>
+                            <p>از طریق دکمه "ارسال گزارش" در منو، به شکل ماهانه گزارش از روند پیشرفت پروژه خود ارسال کنید</p>
+                        </div>
+                    </div>
+                </article>
+                <article class="timeline-entry">
+                    <div class="timeline-entry-inner">
+                        <h1 class="timeline-time">گام پنجم</h1>
+                        <div class="timeline-icon @(step > 5 ? "bg-green" : step == 5 ? "bg-yellow" : "bg-red")"><i class="fa fa-solid fa-folder-open"></i></div>
+                        <div class="timeline-label @(step > 5 ? "bg-green" : "")">
+                            <h4 class="@(step > 5 ? "" : "title")">ارسال کلیه مستندات</h4>
+                            <p>تمامی مستندات خود را ارسال کنید تا توسط استاد راهنما و مدیر پروژه تایید شوند</p>
+                        </div>
+                    </div>
+                </article>
+                <article class="timeline-entry left-aligned">
+                    <div class="timeline-entry-inner">
+                        <h1 class="timeline-time">گام ششم</h1>
+                        <div class="timeline-icon @(step > 6 ? "bg-green" : step == 6 ? "bg-yellow" : "bg-red")"><i class="fa fa-sharp fa-solid fa-plus"></i></div>
+                        <div class="timeline-label @(step > 6 ? "bg-green" : "")">
+                            <h4 class="@(step > 6 ? "" : "title")">درخواست جلسه دفاع</h4>
+                            <p>جلسه دفاع خود را درخواست دهید و سپس داور توسط مدیر پروژه تعیین می شود</p>
+                        </div>
+                    </div>
+                </article>
+                <article class="timeline-entry">
+                    <div class="timeline-entry-inner">
+                        <h1 class="timeline-time">گام هفتم</h1>
+                        <div class="timeline-icon @(step >= 7 ? "bg-green" : "bg-red")"><i class="fa fa-sharp fa-solid fa-plus"></i></div>
+                        <div class="timeline-label @(step >= 7 ? "bg-green" : "")">
+                            <h4 class="@(step > 7 ? "" : "title")">برگزاری جلسه دفاع</h4>
+                            <p>برگزاری جلسه دفاع و ثبت نمره توسط داور، استاد راهنما و مدیر پروژه</p>
+                        </div>
+                    </div>
+                    @*                    <div class="timeline-entry-inner">
+                <div style="-webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg);" class="timeline-icon"><i class="fa fa-plus"></i></div>
+                </div>*@
+                </article>
+            </div>
+        </div>
+    </div>

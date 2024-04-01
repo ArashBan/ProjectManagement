@@ -1,0 +1,190 @@
+﻿@using ProjectManagement.DataLayer.DTOs.Course
+@using ProjectManagement.DataLayer.Entities.Courses
+@model RequestProjectDto
+@{
+	ViewData["Title"] = "درخواست پروژه";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="scroll-y px-10 px-lg-15 pt-0 pb-15 request-form">
+	<form id="kt_modal_new_target_form" asp-action="RequestProject" asp-controller="Project" method="post" class="form">
+		<!--begin::Heading-->
+		<div class="mb-13 text-center">
+			<!--begin::Title-->
+			<h1 class="mb-3">فرم ثبت درخواست پروژه</h1>
+			<!--end::Title-->
+			<!--begin::توضیحات-->
+			<div class="text-muted fw-bold fs-5">
+				جهت درخواست و بررسی موضوع پروژه شما، فرم زیر را پر کنید و ارسال کنید تا توسط استاد راهنما بررسی شود.
+				<a href="~/files/Project/Project.pdf" class="fw-bolder link-primary">دریافت فایل PDF پروژه</a>
+			</div>
+			@if (TempData["SuccessMessage"] != null)
+			{
+				<div class="p-3 mb-2 bg-success text-white" style="margin-top: 10px;">
+					@TempData["SuccessMessage"]
+				</div>
+			}
+			else if (TempData["ErrorMessage"] != null)
+			{
+				<div class="p-3 mb-2 bg-danger text-white" style="margin-top: 10px;">
+					@TempData["ErrorMessage"]
+				</div>
+			}
+			<!--end::توضیحات-->
+		</div>
+		<!--end::Heading-->
+		<!--begin::Input group-->
+		<div class="d-flex flex-column mb-8 fv-row">
+			<!--begin::Tags-->
+			<label class="d-flex align-items-center fs-6 fw-bold mb-2">
+				<span class="required">عنوان پروژه</span>
+				<i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip"
+					title="یک عنوان مناسب که بتواند پروژه شما رو در چند کلمه معرفی کند"></i>
+			</label>
+			<!--end::Tags-->
+			<input type="text" asp-for="Title" class="form-control form-control-solid" placeholder="عنوان" />
+			<span class="text-danger" asp-validation-for="Title"></span>
+		</div>
+		<!--end::Input group-->
+		<!--begin::Input group-->
+		<div class="row g-9 mb-8">
+			<!--begin::Col-->
+			<div class="col-md-6 fv-row">
+				<label class="required fs-6 fw-bold mb-2">نوع پروژه</label>
+				<select asp-for="ProjectType" class="form-select form-select-solid"
+						asp-items="@(Html.GetEnumSelectList<ProjectType>())" data-control="select2" data-hide-search="true"
+						data-placeholder="نوع پروژه">
+					<option value="" selected disabled hidden>انتخاب کنید...</option>
+				</select>
+				<span class="text-danger" asp-validation-for="ProjectType"></span>
+			</div>
+			<!--end::Col-->
+			<!--begin::Col-->
+			<div class="col-md-6 fv-row">
+				<label class="required fs-6 fw-bold mb-2">پلتفرم اجرایی</label>
+				<i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip"
+				   title="اگر نوع پروژه شما برنامه نویسی نیست، سایر رو انتخاب کنید و در بخش توضیحات آن را نیز توضیح دهید"></i>
+				<select asp-for="Platform" class="form-select form-select-solid"
+					asp-items="@(Html.GetEnumSelectList<Platform>())" data-control="select2" data-hide-search="true"
+					data-placeholder="انتخاب پلتفرم">
+					<option value="" selected disabled hidden>انتخاب کنید...</option>
+				</select>
+				<span class="text-danger" asp-validation-for="Platform"></span>
+			</div>
+			<!--end::Col-->			
+		</div>
+		<!--end::Input group-->
+
+		<div class="d-flex flex-column mb-8 fv-row">
+			<label class="d-flex align-items-center fs-6 fw-bold mb-2">
+				<span class="required">اهداف پروژه</span>
+				<i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip"
+				   title="پروژه شما چه اهدافی رو دنبال می کند؟ چه کمکی قراره انجام بده؟ مختصر توضیح بدید"></i>
+			</label>			
+			<div class="position-relative d-flex align-items-center">
+				<input asp-for="Puprpose" type="text" class="form-control form-control-solid" placeholder="اهداف" />
+			</div>
+			<span class="text-danger" asp-validation-for="Puprpose"></span>
+		</div>
+
+		<!--begin::Input group-->
+		<div class="d-flex flex-column mb-8">
+			<label class="required fs-6 fw-bold mb-2">توضیحات پروژه</label>
+			<textarea asp-for="Description" class="form-control form-control-solid" rows="3"
+				placeholder="پروژه خود را به شکل مناسب توضیح دهید"></textarea>
+			<span class="text-danger" asp-validation-for="Description"></span>
+		</div>
+
+		<div class="row g-9 mb-8">
+			<!--begin::Col-->
+			<div class="col-md-6 fv-row">
+				<label class="fs-6 fw-bold mb-2">نام کامل همگروهی</label>
+				<i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip"
+					title="اگر همگروهی ندارید، نیازی به تکمیل این بخش نیست"></i>
+				<input asp-for="TeammateName" type="text" class="form-control form-control-solid"
+					placeholder="نام و نام خانوادگی" />
+				<span class="text-danger" asp-validation-for="TeammateName"></span>
+			</div>
+			<!--end::Col-->
+			<!--begin::Col-->
+			<div class="col-md-6 fv-row">
+				<label class="fs-6 fw-bold mb-2">شماره دانشجویی همگروهی</label>
+				<i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip"
+					title="اگر همگروهی ندارید، نیازی به تکمیل این بخش نیست"></i>
+				<div class="position-relative d-flex align-items-center">
+					<input asp-for="TeammateStudentCode" type="text" class="form-control form-control-solid"
+						placeholder="شماره دانشجویی" />
+					<span class="text-danger" asp-validation-for="TeammateStudentCode"></span>
+				</div>
+			</div>
+			<!--end::Col-->
+		</div>
+
+		<!--end::Input group-->
+		<!--begin::Input group-->
+		@* <div class="d-flex flex-column mb-8 fv-row">
+			<!--begin::Tags-->
+			<label class="d-flex align-items-center fs-6 fw-bold mb-2">
+			<span class="required">برچسب ها</span>
+			<i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Specify a target priorty"></i>
+			</label>
+			<!--end::Tags-->
+			<input class="form-control form-control-solid" value="مهم" name="tags" />
+			</div>*@
+		<!--end::Input group-->
+
+		<!--begin::Input group-->
+@*		<div class="mb-15 fv-row">
+			<!--begin::Wrapper-->
+			<div class="d-flex flex-stack">
+				<!--begin::Tags-->
+				<div class="fw-bold me-5">
+					<label class="fs-6">آیا پروژه عملی است؟</label>
+					<div class="fs-7 text-muted">عملی یا تئوری بودن پروژه رو مشخص کنید</div>
+				</div>
+				<!--end::Tags-->
+				<!--begin::Checkboxes-->
+				<div class="d-flex align-items-center">
+					<!--begin::Checkbox-->
+					<label class="form-check form-check-custom form-check-solid me-10">
+						<input asp-for="IsPractical" class="form-check-input h-20px w-20px" type="radio"
+							name="communication[]" value="email" checked="checked" />
+						<span class="form-check-label fw-bold">عملی</span>
+					</label>
+					<!--end::Checkbox-->
+					<!--begin::Checkbox-->
+					<label class="form-check form-check-custom form-check-solid">
+						<input asp-for="IsPractical" class="form-check-input h-20px w-20px" type="radio"
+							name="communication[]" value="phone" />
+						<span class="form-check-label fw-bold">تئوری</span>
+					</label>
+					<!--end::Checkbox-->
+				</div>
+				<!--end::Checkboxes-->
+				<!--end::Wrapper-->
+			</div>
+		</div>*@
+
+		<div class="mb-15 fv-row">
+			<!--begin::Wrapper-->
+			<div class="d-flex flex-stack">
+				<!--begin::Tags-->
+				<div class="fw-bold me-5">
+					<input asp-for="AcceptTerms" class="form-check-input h-20px w-20px" type="checkbox" name="AcceptTerms" />
+					<label class="required fs-7">اینجانب متعهد می‌شوم پروژه را طبق مشخصات بالا با تایید استاد راهنما در زمان مقرر دفاع نمایم، در غیر این صورت استاد راهنما و گروه آموزشی مجاز خوهند بود که مطابق مقررات با موضوع برخورد نمایند.</label>
+				</div>
+				<!--end::Tags-->
+			</div>
+			<!--end::Wrapper-->
+			<span class="text-danger" asp-validation-for="AcceptTerms"></span>
+		</div>
+		<!--end::Input group-->
+		<!--begin::Actions-->
+		<div class="text-center">
+			<button type="submit" id="kt_modal_new_target_submit" class="btn btn-primary">
+				<span class="indicator-label">ثبت درخواست</span>
+			</button>
+		</div>
+		<!--end::Actions-->
+	</form>
+</div>

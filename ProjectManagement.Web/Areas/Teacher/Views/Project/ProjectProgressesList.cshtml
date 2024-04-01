@@ -1,0 +1,222 @@
+﻿@using ProjectManagement.Application.Extensions
+@using ProjectManagement.DataLayer.DTOs.Course
+@using ProjectManagement.DataLayer.Entities.Courses
+@{
+    ViewData["Title"] = "ProjectProgressesList";
+    Layout = "~/Areas/Teacher/Views/Shared/_TeacherLayout.cshtml";
+
+    var progresses = ViewData["Progresses"] as List<ProjectProgressDto>;
+}
+
+@section Css {
+    <link href="~/Theme/assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
+}
+
+    <div id="kt_content_container" class="container-xxl">
+        <div class="card card-flush mt-6 mt-xl-9">
+            <div class="card-header mt-5">
+                <div class="card-title flex-column">
+                    <h3 class="fw-bolder mb-1">لیست درخواست های شما</h3>
+                </div>
+                <div class="card-toolbar my-1">
+                    <div class="card-toolbar my-1">
+                        <div class="me-6 my-1" style="display: none;">
+                            <select id="kt_filter_year" name="year" data-control="select2" data-hide-search="true" class="w-125px form-select form-select-solid form-select-sm">
+                                <option value="همه" selected="selected">همه زمان</option>
+                                <option value="thisyear">امسال</option>
+                                <option value="thismonth">This month</option>
+                                <option value="lastmonth">اخر ماه</option>
+                                <option value="last90days">90 روز اخیر</option>
+                            </select>
+                        </div>
+                        <div class="me-4 my-1" style="display: none;">
+                            <select id="kt_filter_orders" name="orders" data-control="select2" data-hide-search="true" class="w-125px form-select form-select-solid form-select-sm">
+                                <option value="همه" selected="selected">همه سفارشات</option>
+                                <option value="تایید شده">تایید شده</option>
+                                <option value="رد شده">رد شده</option>
+                                <option value="درحال پردازش">درحال پردازش</option>
+                                <option value="در حمل و نقل">در حمل و نقل</option>
+                            </select>
+                        </div>
+                        <div class="d-flex align-items-center position-relative my-1">
+                            <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
+                            <span class="svg-icon svg-icon-3 position-absolute ms-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="currentColor" />
+                                    <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="currentColor" />
+                                </svg>
+                            </span>
+                            <!--end::Svg Icon-->
+                            <input type="text" id="kt_filter_search" class="form-control form-control-solid form-select-sm w-150px ps-9" placeholder="جستجو " />
+                        </div>
+                    </div>
+                </div>
+                <!--begin::Card toolbar-->
+            </div>
+
+            <div class="card-body pt-0">
+                <!--begin::Table container-->
+                <div class="table-responsive">
+                    <!--begin::Table-->
+                    <table id="kt_profile_overview_table" class="table table-row-bordered table-row-dashed gy-4 align-middle fw-bolder">
+                        <!--begin::Head-->
+                        <thead class="fs-7 text-gray-400 text-uppercase">
+                            <tr>
+                                <th class="min-w-250px white-text">نام دانشجو</th>
+                                <th class="min-w-250px white-text">عنوان گزارش</th>
+                                <th class="min-w-250px white-text">تاریخ ارسال</th>
+                                <th class="min-w-90px white-text">وضعیت</th>
+                                <th class="min-w-50px text-end white-text">جزییات</th>
+                            </tr>
+                        </thead>
+                        <!--end::Head-->
+                        <!--begin::Body-->
+                        <tbody class="fs-6">
+                        @if (progresses != null && progresses.Any())
+                        {
+                            @foreach (var item in progresses)
+                            {
+                                <tr>
+                                    <td>@item.StudentFullName</td>
+                                    <td>
+                                        @item.Title
+                                    </td>
+                                    <td>
+                                        @item.CreationDate
+                                    </td>
+                                    <td>
+                                        @switch (item.Result)
+                                        {
+                                            case ProgressResult.UnderProgress:
+                                                <span class="badge badge-light-warning fw-bolder px-4 py-3">@item.Result.GetEnumName()</span>
+                                                break;
+                                            case ProgressResult.Seen:
+                                                <span class="badge badge-light-success fw-bolder px-4 py-3">@item.Result.GetEnumName()</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target-@item.ProjectProgressId" class="btn btn-light btn-sm">نمایش</a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                    <!--end::Body-->
+                </table>
+
+                @if (progresses != null && progresses.Any())
+                {
+                    @foreach (var item in progresses)
+                    {
+                        <div class="modal fade" id="kt_modal_new_target-@item.ProjectProgressId" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered mw-650px">
+                                <div class="modal-content rounded">
+                                    <div class="modal-header pb-0 border-0 justify-content-end">
+                                        <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                                            <span class="svg-icon svg-icon-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                                    <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
+                                                    <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
+                                                </svg>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="modal-body scroll-y px-10 px-lg-15 pt-0 pb-15">
+                                        <!--begin::Card body-->
+                                        <form asp-action="ProjectProgressesList" asp-controller="Project" asp-area="Teacher" method="post">
+                                            <div class="card-body pt-15" style="text-align: center;">
+                                                 <div class="d-flex flex-center flex-column mb-5">
+                                        <a href="#" class="fs-3 text-gray-800 text-hover-primary fw-bolder mb-1" style="cursor: initial">@item.StudentFullName (@item.StudentCode)</a>
+                                        </div>
+                                        <div class="d-flex flex-stack fs-4 py-3" style="place-content: center;">
+                                        <div class="fw-bolder">جزییات</div>
+                                        </div>
+                                        <div class="separator separator-dashed my-3"></div>
+                                                <!--begin::جزییاتcontent-->
+                                                <div class="pb-5 fs-6">
+
+                                                    <div class="fw-bolder mt-5">عنوان گزارش</div>
+                                                    <div class="text-gray-600">@item.Title</div>
+
+                                                    <div class="fw-bolder mt-5">توضیحات</div>
+                                                    <div class="text-gray-600">
+                                                        @item.Description
+                                                    </div>
+
+                                                    @if (item.TeammateFullName != null)
+                                                    {
+                                                        <div class="fw-bolder mt-5">نام هم گروهی</div>
+                                                        <div class="text-gray-600">
+                                                            @item.TeammateFullName (@item.TeammateStudentCode)
+                                                        </div>
+                                                    }
+
+                                                    <div class="fw-bolder mt-5">تاریخ ارسال</div>
+                                                    <div class="text-gray-600">
+                                                        @item.CreationDate
+                                                    </div>
+
+                                                    <div class="fw-bolder mt-5" style="margin-bottom: 5px;">وضعیت</div>
+                                                    <div class="text-gray-600">
+                                                        @switch (item.Result)
+                                                        {
+                                                            case ProgressResult.UnderProgress:
+                                                                <span class="badge badge-light-warning fw-bolder px-4 py-3">@item.Result.GetEnumName()</span>
+                                                                break;
+                                                            case ProgressResult.Seen:
+                                                                <span class="badge badge-light-success fw-bolder px-4 py-3">@item.Result.GetEnumName()</span>
+                                                                break;
+                                                        }
+                                                    </div>
+
+                                                    @if (item.Result == ProgressResult.UnderProgress)
+                                                    {
+                                                        <textarea class="form-control form-control-solid" name="feedback" id="feedback" rows="3"
+                                                      placeholder="می توانید نظر خود را بنویسید..." style="margin-top: 15px">@item.Feedback</textarea>
+                                                    }
+                                                    else
+                                                    {
+                                                        @if (item.Feedback != null)
+                                                        {
+                                                            <div class="fw-bolder mt-5">بازخورد استاد راهنما</div>
+                                                            <div class="text-gray-600">
+                                                                @item.Feedback
+                                                            </div>
+                                                        }
+                                                    }
+                                                </div>
+                                                <!--end::جزییاتcontent-->
+                                            </div>
+                                            <div class="text-center">
+                                                <a data-bs-dismiss="modal" class="btn btn-secondary">
+                                                    <span class="indicator-label">بستن</span>
+                                                </a>
+                                                @if (item.Result == ProgressResult.UnderProgress)
+                                                {
+                                                    <button type="submit" asp-route-projectProgressId="@item.ProjectProgressId" data-bs-dismiss="modal" class="btn btn-success">
+                                                        <span class="indicator-label">خواندم</span>
+                                                    </button>
+                                                }
+                                            </div>
+                                        </form>
+                                        <!--end::Card body-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+                }
+
+                <!--end::Table-->
+            </div>
+            <!--end::Table container-->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/Theme/assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <script src="~/Theme/assets/js/custom/apps/projects/project/project.js"></script>
+}

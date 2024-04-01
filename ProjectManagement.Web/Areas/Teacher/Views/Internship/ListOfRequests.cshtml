@@ -1,0 +1,452 @@
+﻿@using ProjectManagement.Application.Extensions
+@using ProjectManagement.DataLayer.DTOs.Course
+@using ProjectManagement.DataLayer.Entities.Courses
+@using ProjectManagement.Web.PresentationExtensions
+@{
+    ViewData["Title"] = "لیست درخواست های کارآموزی";
+    Layout = "~/Areas/Teacher/Views/Shared/_TeacherLayout.cshtml";
+
+    var internships = ViewData["Projects"] as List<InternshipDto>;
+    var isParent = Convert.ToBoolean(ViewData["IsParent"]);
+    var teacherId = User.GetId();
+}
+
+@section Css {
+    <link href="~/Theme/assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
+}
+    <div id="kt_content_container" class="container-xxl">
+        <div class="mb-13 text-center table-header">
+            <div class="text-muted fw-bold fs-5">
+                <h5>جهت مشاهده کامل درخواست و تعیین وضعیت آن، روی موضوع آن درخواست کلیک کنید</h5>
+            </div>
+        </div>
+        <div class="card card-flush mt-6 mt-xl-9">
+
+            <div class="card-header mt-5">
+                <!--begin::Card title-->
+                <div class="card-title flex-column">
+                    <h3 class="fw-bolder mb-1">لیست درخواست های شما</h3>
+                </div>
+
+                <!--begin::Card title-->
+                <!--begin::Card toolbar-->
+                <div class="card-toolbar my-1">
+                    <div class="card-toolbar my-1">
+                        <div class="me-6 my-1" style="display: none;">
+                            <select id="kt_filter_year" name="year" data-control="select2" data-hide-search="true" class="w-125px form-select form-select-solid form-select-sm">
+                                <option value="همه" selected="selected">همه زمان</option>
+                                <option value="thisyear">امسال</option>
+                                <option value="thismonth">This month</option>
+                                <option value="lastmonth">اخر ماه</option>
+                                <option value="last90days">90 روز اخیر</option>
+                            </select>
+                        </div>
+                        <div class="me-4 my-1" style="display: none;">
+                            <select id="kt_filter_orders" name="orders" data-control="select2" data-hide-search="true" class="w-125px form-select form-select-solid form-select-sm">
+                                <option value="همه" selected="selected">همه سفارشات</option>
+                                <option value="تایید شده">تایید شده</option>
+                                <option value="رد شده">رد شده</option>
+                                <option value="درحال پردازش">درحال پردازش</option>
+                                <option value="در حمل و نقل">در حمل و نقل</option>
+                            </select>
+                        </div>
+                        <div class="d-flex align-items-center position-relative my-1">
+                            <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
+                            <span class="svg-icon svg-icon-3 position-absolute ms-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="currentColor" />
+                                    <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="currentColor" />
+                                </svg>
+                            </span>
+                            <!--end::Svg Icon-->
+                            <input type="text" id="kt_filter_search" class="form-control form-control-solid form-select-sm w-150px ps-9" placeholder="جستجو " />
+                        </div>
+                    </div>
+                </div>
+                <!--begin::Card toolbar-->
+            </div>
+
+            <div class="card-body pt-0">
+                <!--begin::Table container-->
+                <div class="table-responsive">
+                    <!--begin::Table-->
+                    <table id="kt_profile_overview_table" class="table table-row-bordered table-row-dashed gy-4 align-middle fw-bolder">
+                        <!--begin::Head-->
+                        <thead class="fs-7 text-gray-400 text-uppercase">
+                            <tr>
+                                <th class="min-w-250px white-text">نام دانشجو</th>
+                                <th class="min-w-250px white-text">عنوان کارآموزی</th>
+                                <th class="min-w-250px white-text">محل</th>
+                                <th class="min-w-90px white-text">وضعیت</th>
+                                <th class="min-w-150px white-text">تاریخ ثبت</th>
+                            </tr>
+                        </thead>
+                        <!--end::Head-->
+                        <!--begin::Body-->
+                        <tbody class="fs-6">
+                        @if (internships != null && internships.Any())
+                        {
+                            @foreach (var item in internships)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.StudentFullName
+                                    </td>
+                                    <td>
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target-@item.InternshipId" class="fs-6 text-gray-800">@item.Title</a>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-column justify-content-center">
+                                            <a href="#" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target-@item.InternshipId" class="fs-6 text-gray-800">@item.PlaceName</a>
+                                            <div class="fw-bold text-gray-600">@item.PlacePhoneNumber</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @switch (item.Situation)
+                                        {
+                                            case AcceptSituation.UnderProgress:
+                                                <span class="badge badge-light-warning fw-bolder px-4 py-3">@item.Situation.GetEnumName()</span>
+                                                break;
+                                            case AcceptSituation.Confirm:
+                                                <span class="badge badge-light-success fw-bolder px-4 py-3">@item.Situation.GetEnumName()</span>
+                                                break;
+                                            case AcceptSituation.Accepted:
+                                                <span class="badge badge-light-success fw-bolder px-4 py-3">@item.Situation.GetEnumName()</span>
+                                                break;
+                                            case AcceptSituation.Rejected:
+                                                <span class="badge badge-light-danger fw-bolder px-4 py-3">@item.Situation.GetEnumName()</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td>@item.CreationDate</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                    <!--end::Body-->
+                </table>
+
+                @if (internships != null && internships.Any())
+                {
+                    @foreach (var item in internships)
+                    {
+                        <div class="modal fade" id="kt_modal_new_target-@item.InternshipId" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered mw-650px">
+                                <div class="modal-content rounded">
+                                    <div class="modal-header pb-0 border-0 justify-content-end">
+                                        <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                                            <span class="svg-icon svg-icon-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                                    <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
+                                                    <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
+                                                </svg>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="modal-body scroll-y px-10 px-lg-15 pt-0 pb-15">
+                                        <!--begin::Card body-->
+                                        <form asp-action="ListOfRequests" asp-controller="Internship" asp-area="Teacher" method="post">
+                                            <div class="card-body pt-15" style="text-align: center;">
+                                                <div class="d-flex flex-center flex-column mb-5">
+                                                    <a href="#" class="fs-3 text-gray-800 text-hover-primary fw-bolder mb-1" style="cursor: initial">@item.Title</a>
+                                                </div>
+                                                <div class="d-flex flex-stack fs-4 py-3" style="place-content: center;">
+                                                    <div class="fw-bolder">جزییات</div>
+                                                </div>
+                                                <div class="separator separator-dashed my-3"></div>
+                                                <!--begin::جزییاتcontent-->
+                                                <div class="pb-5 fs-6">
+
+                                                    <div class="fw-bolder mt-5">عنوان</div>
+                                                    <div class="text-gray-600">@item.Title</div>
+
+                                                    <div class="fw-bolder mt-5">نام محل</div>
+                                                    <div class="text-gray-600">@item.PlaceName</div>
+
+                                                    <div class="fw-bolder mt-5">آدرس</div>
+                                                    <div class="text-gray-600">@item.Address</div>
+
+                                                    <div class="fw-bolder mt-5">توضیحات</div>
+                                                    <div class="text-gray-600">
+                                                        @item.Description
+                                                    </div>
+
+                                                    <div class="fw-bolder mt-5">نام سرپرست محل کارآموزی</div>
+                                                    <div class="text-gray-600">@item.SupervisorFullName</div>
+
+                                                    <div class="fw-bolder mt-5">روزهای حضور</div>
+                                                    <div class="text-gray-600">@item.RenderDaysOfAttendanceToText()</div>
+
+                                                    <div class="fw-bolder mt-5">تاریخ درخواست</div>
+                                                    <div class="text-gray-600">
+                                                        @item.CreationDate
+                                                    </div>
+
+                                                    <div class="fw-bolder mt-5" style="margin-bottom: 5px;">وضعیت</div>
+                                                    <div class="text-gray-600">
+                                                        @switch (item.Situation)
+                                                        {
+                                                            case AcceptSituation.UnderProgress:
+                                                                <span class="badge badge-light-warning fw-bolder px-4 py-3">@item.Situation.GetEnumName()</span>
+                                                                break;
+                                                            case AcceptSituation.Confirm:
+                                                                <span class="badge badge-light-success fw-bolder px-4 py-3">@item.Situation.GetEnumName()</span>
+                                                                break;
+                                                            case AcceptSituation.Accepted:
+                                                                <span class="badge badge-light-success fw-bolder px-4 py-3">@item.Situation.GetEnumName()</span>
+                                                                break;
+                                                            case AcceptSituation.Rejected:
+                                                                <span class="badge badge-light-danger fw-bolder px-4 py-3">@item.Situation.GetEnumName()</span>
+                                                                break;
+                                                        }
+                                                    </div>
+
+                                                    @if (isParent && item.TeacherId != teacherId)
+                                                    {
+                                                        <div class="fw-bolder mt-5">استاد راهنما</div>
+                                                        <div class="text-gray-600">
+                                                            @item.TeacherFullName
+                                                        </div>
+                                                    }
+
+                                                    <div class="d-flex flex-column mb-8">
+                                                        @if (isParent && item.TeacherId != teacherId)
+                                                        {
+                                                            <label class="fw-bolder mt-5">بازخورد استاد راهنما به درخواست:</label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <label class="fw-bolder mt-5">بازخورد شما به درخواست:</label>
+                                                        }
+                                                        <textarea class="form-control form-control-solid" name="feedback" id="feedback" rows="3"
+                                                          placeholder="می توانید نظر خود را بنویسید..." style="margin-top: 15px">@item.Feedback</textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="text-center" style="padding: 10px !important;">
+                                                @switch (item.Situation)
+                                                {
+                                                    case AcceptSituation.UnderProgress:
+                                                        <a data-bs-dismiss="modal" class="btn btn-secondary">
+                                                            <span class="indicator-label">بستن</span>
+                                                        </a>
+                                                        <button type="submit" asp-route-projectRequestId="@item.InternshipId" asp-route-situation="@AcceptSituation.Accepted" data-bs-dismiss="modal" class="btn btn-success">
+                                                            <span class="indicator-label">تایید</span>
+                                                        </button>
+                                                        <button type="submit" asp-route-projectRequestId="@item.InternshipId" asp-route-situation="@AcceptSituation.Rejected" data-bs-dismiss="modal" class="btn btn-danger">
+                                                            <span class="indicator-label">عدم تایید</span>
+                                                        </button>
+                                                        break;
+                                                    case AcceptSituation.Confirm:
+                                                        <a data-bs-dismiss="modal" class="btn btn-secondary">
+                                                            <span class="indicator-label">بستن</span>
+                                                        </a>
+                                                        break;
+                                                    case AcceptSituation.Accepted:
+                                                        <a data-bs-dismiss="modal" class="btn btn-secondary">
+                                                            <span class="indicator-label">بستن</span>
+                                                        </a>
+                                                        @if (isParent)
+                                                        {
+                                                            <button type="submit" asp-route-projectRequestId="@item.InternshipId" asp-route-situation="@AcceptSituation.Confirm" data-bs-dismiss="modal" class="btn btn-success">
+                                                                <span class="indicator-label">تایید نهایی</span>
+                                                            </button>
+                                                        }
+                                                        <button type="submit" asp-route-projectRequestId="@item.InternshipId" asp-route-situation="@AcceptSituation.Rejected" data-bs-dismiss="modal" class="btn btn-danger">
+                                                            <span class="indicator-label">عدم تایید</span>
+                                                        </button>
+                                                        break;
+                                                    case AcceptSituation.Rejected:
+                                                        <a data-bs-dismiss="modal" class="btn btn-secondary">
+                                                            <span class="indicator-label">بستن</span>
+                                                        </a>
+                                                        <button type="submit" asp-route-projectRequestId="@item.InternshipId" asp-route-situation="@AcceptSituation.Accepted" data-bs-dismiss="modal" class="btn btn-success">
+                                                            <span class="indicator-label">تایید</span>
+                                                        </button>
+                                                        break;
+                                                }
+                                            </div>
+                                        </form>
+                                    </div>
+@*                                    <div class="text-center">
+                                        <button type="submit" data-bs-dismiss="modal" class="btn btn-secondary">
+                                            <span class="indicator-label">بستن</span>
+                                        </button>
+                                    </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+                @*@if (internships != null && internships.Any())
+            {
+            @foreach (var item in internships)
+            {
+            <div class="modal fade" id="kt_modal_new_target-@item.InternshipId" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered mw-650px">
+            <div class="modal-content rounded">
+            <div class="modal-header pb-0 border-0 justify-content-end">
+            <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+            <span class="svg-icon svg-icon-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
+            <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
+            </svg>
+            </span>
+            </div>
+            </div>
+            <div class="modal-body scroll-y px-10 px-lg-15 pt-0 pb-15">
+            <!--begin::Card body-->
+            <form asp-action="ListOfRequests" asp-controller="Project" asp-area="Teacher" method="post">
+
+            <div class="card-body pt-15" style="text-align: center; padding-top: 0 !important;">
+            <div class="d-flex flex-center flex-column mb-5">
+            <a href="#" class="fs-3 text-gray-800 text-hover-primary fw-bolder mb-1" style="cursor: initial">@item.Title</a>
+            <a href="#" class="fs-5 fw-bold text-muted text-hover-primary mb-6" style="cursor: initial">@item.StudentFullName</a>
+            </div>
+            <div class="d-flex flex-stack fs-4 py-3" style="place-content: center;">
+            @if (!isParent)
+            {
+            <div class="fw-bolder">استاد راهنما: @item.TeacherFullName</div>
+            }
+            else
+            {
+            <div class="fw-bolder">جزییات</div>
+            }
+            </div>
+            <div class="separator separator-dashed my-3"></div>
+            <!--begin::جزییاتcontent-->
+            <div class="pb-5 fs-6">
+
+            <div class="fw-bolder mt-5">اهداف پروژه</div>
+            <div class="text-gray-600">@item.Puprpose</div>
+
+            <div class="fw-bolder mt-5">توضیحات</div>
+            <div class="text-gray-600">
+            @item.Description
+            </div>
+
+            <div class="fw-bolder mt-5">نوع پروژه</div>
+            <div class="text-gray-600">
+            @item.ProjectType.GetEnumName()
+            </div>
+
+            <div class="fw-bolder mt-5">پلتفرم</div>
+            <div class="text-gray-600">
+            @item.Platform.GetEnumName()
+            </div>
+
+            <div class="fw-bolder mt-5">تاریخ درخواست</div>
+            <div class="text-gray-600">
+            @item.CreationDate
+            </div>
+
+            <div class="fw-bolder mt-5" style="margin-bottom: 5px;">وضعیت</div>
+            <div class="text-gray-600">
+            @switch (item.Situation)
+            {
+            case AcceptSituation.UnderProgress:
+            <span class="badge badge-light-warning fw-bolder px-4 py-3">@item.Situation.GetEnumName()</span>
+            break;
+            case AcceptSituation.Confirm:
+            <span class="badge badge-light-success fw-bolder px-4 py-3">@item.Situation.GetEnumName()</span>
+            break;
+            case AcceptSituation.Accepted:
+            <span class="badge badge-light-success fw-bolder px-4 py-3">@item.Situation.GetEnumName()</span>
+            break;
+            case AcceptSituation.Rejected:
+            <span class="badge badge-light-danger fw-bolder px-4 py-3">@item.Situation.GetEnumName()</span>
+            break;
+            }
+            </div>
+
+            @if (isParent && item.TeacherId != teacherId)
+            {
+            <div class="fw-bolder mt-5">استاد راهنما</div>
+            <div class="text-gray-600">
+            @item.TeacherFullName
+            </div>
+            }
+
+            @if (item.TeammateName != null)
+            {
+            <div class="fw-bolder mt-5">همگروهی</div>
+            <div class="text-gray-600">
+            @item.TeammateName (@item.TeammateStudentCode)
+            </div>
+            }
+
+            <div class="d-flex flex-column mb-8">
+            @if (isParent && item.TeacherId != teacherId)
+            {
+            <label class="fw-bolder mt-5">بازخورد استاد راهنما به درخواست:</label>
+            }
+            else
+            {
+            <label class="fw-bolder mt-5">بازخورد شما به درخواست:</label>
+            }
+            <textarea class="form-control form-control-solid" name="feedback" id="feedback" rows="3"
+            placeholder="می توانید نظر خود را بنویسید..." style="margin-top: 15px">@item.Feedback</textarea>
+            </div>
+
+            </div>
+            </div>
+            <div class="text-center" style="padding: 10px !important;">
+            @switch (item.Situation)
+            {
+            case AcceptSituation.UnderProgress:
+            <a data-bs-dismiss="modal" class="btn btn-secondary">
+            <span class="indicator-label">بستن</span>
+            </a>
+            <button type="submit" asp-route-projectRequestId="@item.RequestProjectId" asp-route-situation="@AcceptSituation.Accepted" data-bs-dismiss="modal" class="btn btn-success">
+            <span class="indicator-label">تایید</span>
+            </button>
+            <button type="submit" asp-route-projectRequestId="@item.RequestProjectId" asp-route-situation="@AcceptSituation.Rejected" data-bs-dismiss="modal" class="btn btn-danger">
+            <span class="indicator-label">عدم تایید</span>
+            </button>
+            break;
+            case AcceptSituation.Confirm:
+            <a data-bs-dismiss="modal" class="btn btn-secondary">
+            <span class="indicator-label">بستن</span>
+            </a>
+            break;
+            case AcceptSituation.Accepted:
+            <a data-bs-dismiss="modal" class="btn btn-secondary">
+            <span class="indicator-label">بستن</span>
+            </a>
+            @if (isParent)
+            {
+            <button type="submit" asp-route-projectRequestId="@item.RequestProjectId" asp-route-situation="@AcceptSituation.Confirm" data-bs-dismiss="modal" class="btn btn-success">
+            <span class="indicator-label">تایید نهایی</span>
+            </button>
+            }
+            <button type="submit" asp-route-projectRequestId="@item.RequestProjectId" asp-route-situation="@AcceptSituation.Rejected" data-bs-dismiss="modal" class="btn btn-danger">
+            <span class="indicator-label">عدم تایید</span>
+            </button>
+            break;
+            case AcceptSituation.Rejected:
+            <a data-bs-dismiss="modal" class="btn btn-secondary">
+            <span class="indicator-label">بستن</span>
+            </a>
+            <button type="submit" asp-route-projectRequestId="@item.RequestProjectId" asp-route-situation="@AcceptSituation.Accepted" data-bs-dismiss="modal" class="btn btn-success">
+            <span class="indicator-label">تایید</span>
+            </button>
+            break;
+            }
+            </div>
+            </form>
+            </div>
+            </div>
+            </div>
+            </div>
+            }
+            }*@
+        </div>
+    </div>
+</div>
+</div>
+@section Scripts {
+    <script src="~/Theme/assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <script src="~/Theme/assets/js/custom/apps/projects/project/project.js"></script>
+}

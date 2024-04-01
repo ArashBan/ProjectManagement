@@ -1,0 +1,63 @@
+.white-text {
+    color: white !important;
+}
+
+.table-header {
+    margin-top: -30px;
+}
+
+.request-form {
+    margin-top: -52px;
+}
+
+.profile-details {
+    margin-top: -10px;
+    margin-bottom: 0px !important;
+}
+
+.main-page-margin-fix {
+    margin-top: -60px;
+}
+
+.teacher-stats-box {
+    width: 20%;
+}
+
+@media screen and (max-width: 992px) {
+    .table-header {
+        margin-top: 40px;
+    }
+
+    .request-form {
+        margin-top: 20px;
+    }
+
+    .profile-details {
+        margin-top: 0px;
+    }
+
+    .main-page-margin-fix {
+        margin-top: 0px;
+    }
+
+    .teacher-stats-box {
+        width: 100%;
+    }
+}
+
+.timline-padding {
+    padding: 70px !important;
+    padding-top: 25px;
+}
+
+@media screen and (max-width: 520px) {
+    .timline-padding {
+        padding: 5px !important;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .profile-details {
+        margin-bottom: 1.25rem !important;
+    }
+}

@@ -1,0 +1,87 @@
+﻿@using ProjectManagement.DataLayer.DTOs.Course
+@model InternshipReportDto
+@{
+	ViewData["Title"] = "ارسال گزارش هفتگی";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	var report = ViewData["Report"] as InternshipReportDto;
+    var days = report.GenerateInputs();
+}
+
+<div class="scroll-y px-10 px-lg-15 pt-0 pb-15">
+	<form id="kt_modal_new_target_form" asp-action="SendInternshipReport" asp-controller="Internship" method="post" class="form">
+		<div class="mb-13 text-center">
+			<h1 class="mb-3">ارسال گزارش هفتگی</h1>
+			<div class="text-muted fw-bold fs-5">
+				گزارش از روند کارآموزی خود را به شکل هفتگی در این بخش ارسال کنید.
+			</div>
+			@if (TempData["SuccessMessage"] != null)
+			{
+				<div class="p-3 mb-2 bg-success text-white" style="margin-top: 10px;">
+					@TempData["SuccessMessage"]
+				</div>
+			}
+			else if (TempData["ErrorMessage"] != null)
+			{
+				<div class="p-3 mb-2 bg-danger text-white" style="margin-top: 10px;">
+					@TempData["ErrorMessage"]
+				</div>
+			}
+		</div>
+
+		<div class="row g-9 mb-8">
+			<div class="col-md-6 fv-row">
+				<label class="required fs-6 fw-bold mb-2">تاریخ شروع گزارش</label>
+				<input type="text" asp-for="StartDate" class="form-control form-control-solid" placeholder="مثال: 1401/07/28" />
+				<span class="text-danger" asp-validation-for="StartDate"></span>
+			</div>
+			<div class="col-md-6 fv-row">
+				<label class="required fs-6 fw-bold mb-2">تاریخ پایان گزارش</label>
+				<input type="text" asp-for="EndDate" class="form-control form-control-solid" placeholder="مثال: 1401/10/20" />
+				<span class="text-danger" asp-validation-for="EndDate"></span>
+			</div>
+		</div>
+
+		@foreach (var item in days) 
+		{
+			<div class="d-flex flex-column mb-8">
+				<label class="required fs-6 fw-bold mb-2">@item.Day</label>
+				@switch (item.DayIndex)
+				{
+					case 0:
+						<textarea asp-for="Saturday" class="form-control form-control-solid" rows="3"></textarea>
+						<span class="text-danger" asp-validation-for="Saturday"></span>
+						break;
+					case 1:
+						<textarea asp-for="Sunday" class="form-control form-control-solid" rows="3"></textarea>
+						<span class="text-danger" asp-validation-for="Sunday"></span>
+						break;
+					case 2:
+						<textarea asp-for="Monday" class="form-control form-control-solid" rows="3"></textarea>
+						<span class="text-danger" asp-validation-for="Monday"></span>
+						break;
+					case 3:
+						<textarea asp-for="Tuesday" class="form-control form-control-solid" rows="3"></textarea>
+						<span class="text-danger" asp-validation-for="Tuesday"></span>
+						break;
+					case 4:
+						<textarea asp-for="Wednesday" class="form-control form-control-solid" rows="3"></textarea>
+						<span class="text-danger" asp-validation-for="Wednesday"></span>
+						break;
+					case 5:
+						<textarea asp-for="Thursday" class="form-control form-control-solid" rows="3"></textarea>
+						<span class="text-danger" asp-validation-for="Thursday"></span>
+						break;
+					default:
+						break;
+				}
+			</div>
+		}
+
+		<div class="text-center">
+			<button type="submit" id="kt_modal_new_target_submit" class="btn btn-primary">
+				<span class="indicator-label">ارسال گزارش</span>
+			</button>
+		</div>
+	</form>
+</div>

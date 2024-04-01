@@ -1,0 +1,110 @@
+﻿@using ProjectManagement.Application.Extensions
+@using ProjectManagement.DataLayer.DTOs.Common
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using ProjectManagement.Application.Services.Interfaces
+@using ProjectManagement.DataLayer.Entities.Common
+@using ProjectManagement.Web.PresentationExtensions
+@model List<ProjectManagement.DataLayer.DTOs.Common.NewsDto>
+@inject IStudentService StudentService;
+@inject ITeacherService TeacherService;
+@{
+    var studentId = User.GetId();  
+    bool hasProject;
+    bool hasInternship;
+    if (User.IsStudent())
+    {
+        hasProject = await StudentService.HasCourse(1, studentId);
+        hasInternship = await StudentService.HasCourse(2, studentId);
+    }
+    else
+    {
+        var teacher = await TeacherService.GetTeacherByUserId(User.GetUserId());
+        hasProject = teacher.Project;
+        hasInternship = teacher.Internship;
+    }
+}
+
+<div class="card card-xl-stretch mb-xl-8" style="height: 100%;">
+    <div class="card-header align-items-center border-0 mt-4">
+        <h3 class="card-title align-items-start flex-column">
+            <span class="fw-bolder text-dark">آخرین اطلاعیه ها</span>
+            <span class="text-muted mt-1 fw-bold fs-7">متناسب با دروس شما</span>
+        </h3>
+    </div>
+    <!--begin::Body-->
+    <div class="card-body pt-3">
+        @if (Model.Any())
+        {
+            var last = Model.Last();
+            foreach (var item in Model)
+            {
+                if (!hasProject && item.Type == InfoType.Project) continue;
+                if (!hasInternship && item.Type == InfoType.Internship) continue;
+
+                <div class="d-flex align-items-sm-center mb-7">
+                    <div class="d-flex flex-row-fluid flex-wrap align-items-center">
+                        <div class="flex-grow-1 me-2">
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target-@item.NewsId" class="text-gray-800 fw-bolder text-hover-primary fs-6">@item.Title</a>
+                            <span class="text-muted fw-bold d-block pt-1">@item.CreationDate</span>
+                        </div>
+                        @switch (item.Importance)
+                        {
+                            case Importance.Information:
+                                <span class="badge badge-light-success fs-8 fw-bolder my-2">@item.Importance.GetEnumName()</span>
+                                break;
+                            case Importance.Instant:
+                                <span class="badge badge-light-danger fs-8 fw-bolder my-2">@item.Importance.GetEnumName()</span>
+                                break;
+                            case Importance.Important:
+                                <span class="badge badge-light-warning fs-8 fw-bolder my-2">@item.Importance.GetEnumName()</span>
+                                break;
+                        }
+                    </div>
+                </div>
+                @if (!item.Equals(last))
+                {
+                    <div class="separator separator-dashed my-3"></div>
+                }
+
+                <div class="modal fade" id="kt_modal_new_target-@item.NewsId" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered mw-650px">
+                        <div class="modal-content rounded">
+                            <div class="modal-header pb-0 border-0 justify-content-end">
+                                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                                    <span class="svg-icon svg-icon-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                            <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
+                                            <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
+                                        </svg>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="modal-body scroll-y px-10 px-lg-15 pt-0 pb-15">
+                                <!--begin::Card body-->
+                                <div class="card-body pt-15" style="text-align: center;">
+                                    <div class="d-flex flex-center flex-column mb-5">
+                                        <p class="fs-3 text-gray-800 text-hover-primary fw-bolder mb-1" style="cursor: initial">@item.Title</p>
+                                        <p class="fs-5 fw-bold text-muted text-hover-primary mb-6" style="cursor: initial">ارسال شده در تاریخ @item.CreationDate توسط @item.TeacherFullName</p>
+                                    </div>
+                                    <div class="separator separator-dashed my-3"></div>
+                                    <div class="pb-5 fs-6">
+                                        @Html.Raw(item.Body)
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" data-bs-dismiss="modal" class="btn btn-secondary">
+                                        <span class="indicator-label">بستن</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <partial name="_NoDataAvailablePartial" model='new NoDataAvailable { Title = "اطلاعیه ای موجود نیست", Message = "اطلاعیه ای که برای شما نمایش داده شود موجود نیست"}' />
+        }
+    </div>
+</div>
