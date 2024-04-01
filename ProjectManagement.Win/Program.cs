@@ -55,7 +55,7 @@ namespace ProjectManagement.Win
                 services.AddTransient<IMainFormService, MainFormService>();
                 services.AddDbContext<ProjectManagementContext>(x =>
                     x.UseSqlServer("Data Source=193.141.65.167,2019; Initial Catalog=ProjectManagementDb; Integrated Security=false; User Id=university_user; password=Twb6&o812; MultipleActiveResultSets=true"));
-                //x.UseSqlServer("Data Source=.; Initial Catalog=ProjectManagementDb; Integrated Security=false; MultipleActiveResultSets=true"));
+                    //x.UseSqlServer("Data Source=.; Initial Catalog=ProjectManagementDb; Integrated Security=false; MultipleActiveResultSets=true"));
             });
         }
     }
